@@ -83,8 +83,11 @@ ifeq (${MBED_TOOLCHAIN},)
   MBED_TOOLCHAIN:=${DEFAULT_TOOLCHAIN}
 endif
 
+MBED_TOOLCHAIN_EXTENSION=$(shell basename ${BUILD_PROFILE} .json)
+BOOTLDR_TOOLCHAIN_EXTENSION=$(shell basename ${BOOTLOADER_BUILD_PROFILE} .json)
 # Specifies the path to the directory containing build output files
-MBED_BUILD_DIR:=./BUILD/${MBED_TARGET}/${MBED_TOOLCHAIN}
+MBED_BUILD_DIR:=./BUILD/${MBED_TARGET}/${MBED_TOOLCHAIN}-${MBED_TOOLCHAIN_EXTENSION}
+BOOTLDR_BUILD_DIR:=./BUILD/${MBED_TARGET}/${MBED_TOOLCHAIN}-${BOOTLDR_TOOLCHAIN_EXTENSION}
 
 # Maximum size for the bootloader.  Any larger than this and it will
 # overflow into the next partition and potentially overwrite other
@@ -166,7 +169,7 @@ ${PROG_BIN}: prepare ${SRCS} ${HDRS}
 
 ${BOOTLDR_BIN}: prepare
 	@$(call Build/Bootloader/Compile)
-	cp ${BOOTLDR_DIR}/${MBED_BUILD_DIR}/${BOOTLDR_PROG}.bin $@
+	cp ${BOOTLDR_DIR}/${BOOTLDR_BUILD_DIR}/${BOOTLDR_PROG}.bin $@
 
 .PHONY: stats
 stats:
